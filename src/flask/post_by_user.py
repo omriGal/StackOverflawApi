@@ -32,7 +32,7 @@ def get_post_by_id():
         my_response += '<a href="' + item["link"] + '">' + item["link"] + '</a>'
     my_response += "</body> </html>"
 
-    print my_response
+    return my_response
 
 
 get_post_by_id()
