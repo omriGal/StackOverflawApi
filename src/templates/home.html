@@ -19,14 +19,18 @@
 
         <div class="jumbotron">
             <p class="lead"></p>
-            <form method="post" action='/myPosts'>
-                <p><label>user_id:</label> <input type="text" name="user_id" required></p>
-                <!--<p><button type="submit" name="no-auth" value="no">Get my posts</button></p>-->
-                <!--<p><button type="submit" name="with-auth" value="yes"><b>Get my posts</b></button></p>-->
-                <input type="submit" name="action" value="Get my posts" />
-                <input type="submit" name="action" value="Get my posts with auth" />
+            <form method="get" action="{{ url_for('get_user_posts') }}">
+                <p><input type="text" name="user_id" value="enter user_id"> <input type="submit" value="Get my posts"></p>
             </form>
         </div>
+
+        <div class="jumbotron">
+            <p class="lead"></p>
+            <form method="get" action="{{ url_for('get_user_posts_with_auth') }}">
+                <p><button type="submit" value="yes"><b>Get my posts</b></button></p>
+            </form>
+        </div>
+
 
         <footer class="footer">
             <p>&copy; Omri Gal 2017</p>

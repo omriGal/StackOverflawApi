@@ -18,7 +18,18 @@
       </div>
 
       <div class="jumbotron">
-        <h1>List of user - {user_id} App</h1>
+        <h2> List of posts by user_id - {{user_id}} </h2>
+
+        {% for post in posts %}
+        <li><a href="{{post }}"> {{ post }} </a> </li> <br>
+        {% endfor %}
+
+        {% if more %}
+        <h3>user has more posts</h3>
+        {% else %}
+        <h3> No more posts for user</h3>
+        {% endif %}
+
 
       </div>
 

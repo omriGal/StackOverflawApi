@@ -20,18 +20,40 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/myPosts', methods=['GET', 'POST'])
-def my_posts():
-    session['user_id'] = request.form['user_id']
-    if request.form['action'] == 'Get my posts with auth':
-        oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
-        # dubug
-        pprint(vars(oauth))
-        authorization_url, state = oauth.authorization_url(OAUTH_DIALOG_URL)
-        # debug
-        print(authorization_url)
-    return get_post_by_id(session['user_id'])
+# @app.route('/myPosts', methods=['GET', 'POST'])
+# def my_posts():
+#     session['user_id'] = request.form['user_id']
+#     if request.form['action'] == 'Get my posts with auth':
+#         oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
+#         # todo: dubug
+#         pprint(vars(oauth))
+#         authorization_url, state = oauth.authorization_url(OAUTH_DIALOG_URL)
+#         # todo: debug
+#         print(authorization_url)
+#     return get_post_by_id(session['user_id'])
 
+# @app.route('/users/<user_id>/posts', methods=['GET'])
+
+@app.route('/user/posts', methods=['GET'])
+def get_user_posts():
+    session['user_id'] = request.values["user_id"]
+    posts, has_more = get_post_by_id(session['user_id'])
+    return render_template('myPosts.html', user_id=session["user_id"], posts=posts, more=has_more)
+
+
+@app.route('/user/post/auth', methods=['GET'])
+def get_user_posts_with_auth():
+    # oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
+    # authorization_url, state = oauth.authorization_url(OAUTH_DIALOG_URL)
+    # request
+    # posts = get_post_by_id(session['user_id'])
+    # return render_template('my_posts.html', session['user_id'], posts)
+    print "hi!!"
+
+
+# users/:userId/posts
+
+# myPosts
 
 if __name__ == "__main__":
     app.run()
