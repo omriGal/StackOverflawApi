@@ -19,12 +19,13 @@
 
         <div class="jumbotron">
             <p class="lead"></p>
-
             <form method="post" action='/myPosts'>
                 <p><label>user_id:</label> <input type="text" name="user_id" required></p>
-                <p><button type="submit">Send</button></p>
+                <!--<p><button type="submit" name="no-auth" value="no">Get my posts</button></p>-->
+                <!--<p><button type="submit" name="with-auth" value="yes"><b>Get my posts</b></button></p>-->
+                <input type="submit" name="action" value="Get my posts" />
+                <input type="submit" name="action" value="Get my posts with auth" />
             </form>
-
         </div>
 
         <footer class="footer">
