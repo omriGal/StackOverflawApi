@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, session, redirect
-from pprint import pprint
+from flask import Flask, render_template, request, session
+from flask import url_for
+from flask_oauth import OAuth
 
-from requests_oauthlib import OAuth2Session
-
-from src.flask.post_by_user import get_post_by_id
+from src.flask.utils.post_by_user import get_post_by_id
 
 OAUTH_DIALOG_URL = 'https://stackexchange.com/oauth/dialog'
 CLIENT_ID = '9285'
@@ -14,25 +13,21 @@ SCOPE = 'no_expiry'
 app = Flask(__name__, template_folder='../templates')
 app.config['SECRET_KEY'] = 'F34TF$($e34D';
 
+oauth = OAuth()
+stackExchange = oauth.remote_app('stackexchange',
+                                 base_url='https://api.stackexchange.com/2.2',
+                                 request_token_url=None,
+                                 access_token_url='/oauth/access_token',
+                                 authorize_url='https://stackexchange.com/oauth/dialog',
+                                 consumer_key=CLIENT_ID,
+                                 consumer_secret=CLIENT_SECRET,
+                                 request_token_params={'scope': 'no_expiry'})
+
 
 @app.route("/")
 def home():
     return render_template('home.html')
 
-
-# @app.route('/myPosts', methods=['GET', 'POST'])
-# def my_posts():
-#     session['user_id'] = request.form['user_id']
-#     if request.form['action'] == 'Get my posts with auth':
-#         oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
-#         # todo: dubug
-#         pprint(vars(oauth))
-#         authorization_url, state = oauth.authorization_url(OAUTH_DIALOG_URL)
-#         # todo: debug
-#         print(authorization_url)
-#     return get_post_by_id(session['user_id'])
-
-# @app.route('/users/<user_id>/posts', methods=['GET'])
 
 @app.route('/user/posts', methods=['GET'])
 def get_user_posts():
@@ -41,19 +36,29 @@ def get_user_posts():
     return render_template('myPosts.html', user_id=session["user_id"], posts=posts, more=has_more)
 
 
-@app.route('/user/post/auth', methods=['GET'])
-def get_user_posts_with_auth():
-    # oauth = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
-    # authorization_url, state = oauth.authorization_url(OAUTH_DIALOG_URL)
-    # request
-    # posts = get_post_by_id(session['user_id'])
-    # return render_template('my_posts.html', session['user_id'], posts)
-    print "hi!!"
+@app.route('/auth', methods=['GET'])
+def get_auth():
+    return stackExchange.authorize(callback=url_for('stackExchange_authorized',
+                                                    next=request.args.get('next') or request.referrer or None, _external=True))
 
 
-# users/:userId/posts
+@app.route('/login/authorized')
+@stackExchange.authorized_handler
+def stackExchange_authorized(response):
+    if response is None:
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
 
-# myPosts
+    session['access_token'] = (response['access_token'], '')
+    me = stackExchange.get('me/posts')
+    return render_template('myPosts.html', user_id="By-auth", posts=me, more=me)
+
+@stackExchange.tokengetter
+def get_stackExchange_oauth_token():
+    return session.get('access_token')
+
 
 if __name__ == "__main__":
     app.run()

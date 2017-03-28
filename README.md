@@ -13,7 +13,7 @@ This is a StackExchange API server-lient example allows to get all user's post b
 1. Download and install python 2.7
 2. install python-pip
 3. pip install flask
-4. pip install requests requests_oauthlib
+4. pip install requests requests_oauthlib Flask-OAuth
 5. git clone "https://github.com/omriGal/StackOverflowApi" to your local repositiory
 6. go to - StackOverdlowApi/src/flask
 7. python app.py
